@@ -1,7 +1,3 @@
-data "http" "myip" {
-  url = "http://ipv4.icanhazip.com"
-}
-
 locals {
   node_sg_default_rules = {
       ingress_self_all = {
@@ -60,9 +56,8 @@ module "eks" {
     source = "terraform-aws-modules/eks/aws"
     cluster_name = var.cluster_name
     cluster_version = var.cluster_version
-    #cluster_endpoint_public_access_cidrs = ["${chomp(data.http.myip.body)}/32"]
     cluster_endpoint_private_access = true 
-    cluster_endpoint_public_access = false #true 
+    cluster_endpoint_public_access = false 
     cluster_additional_security_group_ids = [ "${aws_security_group.admin_control_sg.id}" ]
     create_cluster_security_group = true 
     create_node_security_group = true 

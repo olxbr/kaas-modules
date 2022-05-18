@@ -3,11 +3,11 @@ data "aws_region" "current" {}
 
 locals{
     rancher_api_path = "/v3/clusters"
-    credential_secret = "cattle-global-data:cc-4s5wt"
+    credential_secret = var.orchestrator_credential_secret
     account_id = data.aws_caller_identity.current.account_id
 }
 
-/*resource "restapi_object" "join_rancher" {
+resource "restapi_object" "join_rancher" {
   count = var.join_orchestrator ? 1 : 0
   path = local.rancher_api_path
   data = jsonencode({
@@ -17,16 +17,8 @@ locals{
     windowsPreferedCluster = false 
     type = "cluster"
     name = var.cluster_name
-    labels = {
-      awsAccountID = local.account_id
-      clusterName = var.cluster_name
-    }
-    annotations = {
-      "ui.rancher/badge-color" = "#00ff1e"
-      "ui.rancher/badge-icon-text" = ""
-      "ui.rancher/badge-text" = "COPS"
-    }
-    
+    labels = merge({awsAccountID = local.account_id, clusterName = var.cluster_name}, var.tags)
+    annotations = var.orchestrator_badges
     eksConfig = {
       imported = true 
       displayName = var.cluster_name
@@ -42,4 +34,4 @@ locals{
   depends_on = [
     module.eks
   ]
-} */
+} 

@@ -36,6 +36,15 @@ variable "join_orchestrator" {
   default = false
 }
 
+variable "orchestrator_credential_secret" {
+  type = string 
+  default = "cattle-global-data:cc-4s5wt"
+}
+
+variable "orchestrator_badges" {
+  type = map(string)
+}
+
 variable "workload_types" {
   type = map(object({
     on_demand = list(string)
