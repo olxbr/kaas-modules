@@ -25,7 +25,7 @@ data "aws_subnets" "downstream_clusters_subnets_private"{
     }
 
     tags = {
-      Tier = "Private"
+      Tier = "private"
     }
 }
 
@@ -41,6 +41,6 @@ data "aws_subnets" "downstream_clusters_subnets_public"{
     }
 
     tags = {
-      Tier = "Public"
+      Tier = "public"
     }
 }
