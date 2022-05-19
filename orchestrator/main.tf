@@ -18,7 +18,7 @@ resource "restapi_object" "join_rancher" {
       displayName = var.cluster_name
       region = var.region
       type = "eksclusterconfigspec"
-      amazonCredentialSecret = local.credential_secret
+      amazonCredentialSecret = var.credential_secret
       nodeGroups = null 
       privateAccess = true 
       publicAccess = false 
