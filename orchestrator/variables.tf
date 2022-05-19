@@ -1,6 +1,6 @@
 variable "credential_secret" {
   type = string 
-  default = "cattle-global-data:cc-4s5wt"
+  default = "cc-4s5wt"
 }
 
 variable "badges" {

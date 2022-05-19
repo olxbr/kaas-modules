@@ -12,13 +12,13 @@ resource "restapi_object" "join_rancher" {
     type = "cluster"
     name = var.cluster_name
     labels = merge({clusterName = var.cluster_name}, var.labels)
-    annotations = var.orchestrator_badges
+    annotations = var.badges
     eksConfig = {
       imported = true 
       displayName = var.cluster_name
       region = var.region
       type = "eksclusterconfigspec"
-      amazonCredentialSecret = var.credential_secret
+      amazonCredentialSecret = "cattle-global-data:${var.credential_secret}"
       nodeGroups = null 
       privateAccess = true 
       publicAccess = false 
