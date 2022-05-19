@@ -1,9 +1,9 @@
-variable "orchestrator_credential_secret" {
+variable "credential_secret" {
   type = string 
   default = "cattle-global-data:cc-4s5wt"
 }
 
-variable "orchestrator_badges" {
+variable "badges" {
   type = map(string)
 }
 
