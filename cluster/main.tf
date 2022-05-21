@@ -16,7 +16,10 @@ module "eks" {
     create_node_security_group = true 
     node_security_group_additional_rules = merge(local.node_sg_default_rules, var.node_security_group_additional_rules)
     node_security_group_tags = merge(local.default_node_sg_tags, var.node_security_group_tags)
-  
+
+    adminstrator_access_role_preprod = "arn:aws:iam::375164415270:role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_AWSAdministratorAccess_ddb734d029aa8628"
+    orchestrator_user_arn = "arn:aws:iam::375164415270:user/rancher-admin"
+
     cluster_addons = {
         coredns = {
             resolve_conflicts = "OVERWRITE"
@@ -28,6 +31,23 @@ module "eks" {
 
         kube-proxy = {}
     }
+
+    aws_auth_roles = [
+        {
+            rolearn = local.adminstrator_access_role_preprod
+            username = "administrator-preprod"
+            groups = ["system:masters"]
+        }
+    ]
+
+    aws_auth_users = [
+        {
+            userarn = local.orchestrator_user_arn
+            username = "orchestrator"
+            groups = ["system:masters"]
+        }
+    ]
+
     vpc_id = var.network.vpc_id
     subnet_ids = var.network.subnets.private
     eks_managed_node_group_defaults = {
