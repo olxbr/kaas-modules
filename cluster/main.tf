@@ -3,6 +3,9 @@ locals {
       "kubernetes.io/cluster/${var.cluster_name}" = "owned"
       Name = "${var.cluster_name}-nodes-sg"
   }
+
+    adminstrator_access_role_preprod = "arn:aws:iam::375164415270:role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_AWSAdministratorAccess_ddb734d029aa8628"
+    orchestrator_user_arn = "arn:aws:iam::375164415270:user/rancher-admin"
 }
 
 module "eks" {
@@ -16,9 +19,6 @@ module "eks" {
     create_node_security_group = true 
     node_security_group_additional_rules = merge(local.node_sg_default_rules, var.node_security_group_additional_rules)
     node_security_group_tags = merge(local.default_node_sg_tags, var.node_security_group_tags)
-
-    adminstrator_access_role_preprod = "arn:aws:iam::375164415270:role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_AWSAdministratorAccess_ddb734d029aa8628"
-    orchestrator_user_arn = "arn:aws:iam::375164415270:user/rancher-admin"
 
     cluster_addons = {
         coredns = {
