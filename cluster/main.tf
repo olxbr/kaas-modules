@@ -3,9 +3,6 @@ locals {
       "kubernetes.io/cluster/${var.cluster_name}" = "owned"
       Name = "${var.cluster_name}-nodes-sg"
   }
-
-    adminstrator_access_role_preprod = "arn:aws:iam::375164415270:role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_AWSAdministratorAccess_ddb734d029aa8628"
-    orchestrator_user_arn = "arn:aws:iam::375164415270:user/rancher-admin"
 }
 
 module "eks" {
@@ -32,22 +29,6 @@ module "eks" {
         kube-proxy = {}
     }
 
-    aws_auth_roles = [
-        {
-            rolearn = local.adminstrator_access_role_preprod
-            username = "administrator-preprod"
-            groups = ["system:masters"]
-        }
-    ]
-
-    aws_auth_users = [
-        {
-            userarn = local.orchestrator_user_arn
-            username = "orchestrator"
-            groups = ["system:masters"]
-        }
-    ]
-
     vpc_id = var.network.vpc_id
     subnet_ids = var.network.subnets.private
     eks_managed_node_group_defaults = {
@@ -67,6 +48,11 @@ module "eks" {
             capacity_type = upper(workload.lifecycle)
             instance_types = lookup(lookup(var.workload_types, workload.type), lower(workload.lifecycle))
             subnet_ids = var.network.subnets.private
+            iam_role_additional_policies = [
+                aws_iam_policy.eks-temporary-additional.arn, 
+                "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore",
+                "arn:aws:iam::aws:policy/AmazonSSMPatchAssociation", 
+            ]
             labels = merge({
               "cops.olxbr.io/workload" = workload.type
             }, workload.labels)

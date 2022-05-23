@@ -18,6 +18,15 @@ locals {
         cidr_blocks = ["10.0.0.0/8"]
       }
 
+      egress_internet_all = {
+        description = "Allows output to internet"
+        protocol    = "-1"
+        from_port   = 0
+        to_port     = 0
+        type        = "egress"
+        cidr_blocks = ["0.0.0.0/0"]
+      }
+
       egress_nexus = {
         description = "Nexus registry 5000/tcp"
         protocol = "tcp"
