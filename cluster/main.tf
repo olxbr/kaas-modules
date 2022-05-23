@@ -1,8 +1,11 @@
+data "aws_caller_identity" "current"{}
+
 locals {
   default_node_sg_tags = {
       "kubernetes.io/cluster/${var.cluster_name}" = "owned"
       Name = "${var.cluster_name}-nodes-sg"
   }
+  account_id = data.aws_caller_identity.current.account_id
 }
 
 module "eks" {
@@ -58,7 +61,7 @@ module "eks" {
             instance_types = lookup(lookup(var.workload_types, workload.type), lower(workload.lifecycle))
             subnet_ids = var.network.subnets.private
             iam_role_additional_policies = [
-                aws_iam_policy.eks-temporary-additional.arn, 
+                "arn:aws:iam::${local.account_id}:policy/eks.additional.nodes.temporary", 
                 "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore",
                 "arn:aws:iam::aws:policy/AmazonSSMPatchAssociation", 
             ]
