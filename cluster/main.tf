@@ -16,6 +16,7 @@ module "eks" {
     create_node_security_group = true 
     node_security_group_additional_rules = merge(local.node_sg_default_rules, var.node_security_group_additional_rules)
     node_security_group_tags = merge(local.default_node_sg_tags, var.node_security_group_tags)
+    manage_aws_auth_configmap = true
 
     cluster_addons = {
         coredns = {
@@ -28,6 +29,14 @@ module "eks" {
 
         kube-proxy = {}
     }
+
+    aws_auth_users = [
+        {
+            userarn = data.aws_iam_user.orchestrator_user.arn
+            username = "orchestrator"
+            groups = ["system:masters"]
+        }
+    ]
 
     vpc_id = var.network.vpc_id
     subnet_ids = var.network.subnets.private

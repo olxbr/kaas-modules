@@ -1,3 +1,7 @@
+data "aws_iam_user" "orchestrator_user" {
+  user_name = "rancher-admin"
+}
+
 resource "aws_iam_policy" "eks-temporary-additional" {
   name = "${var.cluster_name}-additional-temporary"
   description = "Temporary permissions for nodes"
@@ -8,7 +12,7 @@ resource "aws_iam_policy" "eks-temporary-additional" {
         {
             "Effect": "Allow",
             "Action": [
-                "firehose:PutRecord",
+                "firehose:PutRedatnacord",
                 "ec2:*",
                 "elasticloadbalancing:*",
                 "cloudwatch:*",
