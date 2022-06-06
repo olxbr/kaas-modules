@@ -66,7 +66,7 @@ module "eks" {
                 "arn:aws:iam::aws:policy/AmazonSSMPatchAssociation", 
             ]
             labels = merge({
-              "cops.olxbr.io/workload" = workload.type
+              "kaas.olxbr.io/workload" = workload.type
             }, workload.labels)
         }
     }
