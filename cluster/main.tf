@@ -66,7 +66,7 @@ module "eks" {
                 "arn:aws:iam::aws:policy/AmazonSSMPatchAssociation", 
             ]
             labels = merge({
-              "cops.olxbr.io/workload" = workload.type
+              "cops.olxbr.io/workload" = lookup(var.workload_types, workload.type).label_name == "" ? workload.type : lookup(var.workload_types, workload.type).label_name
             }, workload.labels)
         }
     }

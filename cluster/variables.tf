@@ -35,6 +35,7 @@ variable "workload_types" {
   type = map(object({
     on_demand = list(string)
     spot = list(string)
+    label_name = string 
   }))
 }
 
