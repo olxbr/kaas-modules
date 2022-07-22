@@ -25,7 +25,6 @@ module "eks" {
     create_cluster_security_group = true 
     create_node_security_group = false 
     node_security_group_id = aws_security_group.nodes_sg.id
-    node_security_group_tags = merge(local.default_node_sg_tags, var.node_security_group_tags)
     manage_aws_auth_configmap = true
 
     cluster_addons = {
