@@ -11,11 +11,19 @@ resource "aws_security_group" "nodes_sg" {
   vpc_id = var.network.vpc_id
 
   ingress {
+    description = "controlplane to node"
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    security_groups = [ aws.aws_security_group.controlplane_sg.id ]
+  }
+
+  ingress {
     description = "orchestrator network connection"
     from_port = 0
     to_port = 0 
     cidr_blocks = [ "10.200.0.0/16", "10.201.0.0/16" ]
-    protocol = "tcp"
+    protocol = "-1"
   }
 
   ingress {
