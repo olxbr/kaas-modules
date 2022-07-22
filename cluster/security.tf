@@ -15,7 +15,7 @@ resource "aws_security_group" "nodes_sg" {
     from_port = 0
     to_port = 0
     protocol = "-1"
-    security_groups = [ aws.aws_security_group.controlplane_sg.id ]
+    security_groups = [ aws_security_group.controlplane_sg.id ]
   }
 
   ingress {
