@@ -1,3 +1,10 @@
+locals {
+  default_node_sg_tags = {
+    "kubernetes.io/cluster/${var.cluster_name}" = "owned"
+    Name = "${var.cluster_name}-nodes-sg"
+  }
+}
+
 resource "aws_security_group" "nodes_sg" {
   name = "${var.cluster_name}-nodes-sg"
   description = "security group for control orchestrator"
@@ -7,7 +14,7 @@ resource "aws_security_group" "nodes_sg" {
     description = "orchestrator network connection"
     from_port = 0
     to_port = 0 
-    cidr_blocks = [ "10.200.0.0/16" ]
+    cidr_blocks = [ "10.200.0.0/16", "10.201.0.0/16" ]
     protocol = "tcp"
   }
 
@@ -26,11 +33,13 @@ resource "aws_security_group" "nodes_sg" {
     cidr_blocks = [ "0.0.0.0/0" ]
     protocol = "-1"
   }
+
+  tags = merge(local.default_node_sg_tags, var.node_security_group_tags)
 }
 
-resource "aws_security_group" "admin_control_sg" {
-  name = "${var.cluster_name}-admin-control-sg"
-  description = "security group for control admins"
+resource "aws_security_group" "controlplane_sg" {
+  name = "${var.cluster_name}-controlplane-sg"
+  description = "security group for control plane"
   vpc_id = var.network.vpc_id
 
   ingress {

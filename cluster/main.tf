@@ -1,11 +1,17 @@
 data "aws_caller_identity" "current"{}
 
 locals {
-  default_node_sg_tags = {
-      "kubernetes.io/cluster/${var.cluster_name}" = "owned"
-      Name = "${var.cluster_name}-nodes-sg"
-  }
   account_id = data.aws_caller_identity.current.account_id
+}
+
+resource "aws_launch_template" "nodes_launch_template" {
+  name = "${var.cluster_name}-nodes-template"
+  default_version = "1"
+
+  network_interfaces {
+    associate_public_ip_address = false
+    security_groups = [ aws_security_group.nodes_sg.id ]
+  }
 }
 
 module "eks" {
@@ -14,10 +20,10 @@ module "eks" {
     cluster_version = var.cluster_version
     cluster_endpoint_private_access = true 
     cluster_endpoint_public_access = false 
-    cluster_additional_security_group_ids = [ "${aws_security_group.admin_control_sg.id}" ]
+    cluster_additional_security_group_ids = [ "${aws_security_group.controlplane_sg.id}" ]
     create_cluster_security_group = true 
-    create_node_security_group = true 
-    node_security_group_additional_rules = merge(local.node_sg_default_rules, var.node_security_group_additional_rules)
+    create_node_security_group = false 
+    node_security_group_id = aws_security_group.nodes_sg.id
     node_security_group_tags = merge(local.default_node_sg_tags, var.node_security_group_tags)
     manage_aws_auth_configmap = true
 
@@ -51,6 +57,9 @@ module "eks" {
     eks_managed_node_groups = {
         for index, workload in var.workloads:
         "${var.cluster_name}-${workload.type}-${workload.lifecycle}" => {
+            create_launch_template = false
+            launch_template_name   = aws_launch_template.nodes_launch_template.name
+            launch_template_version = aws_launch_template.nodes_launch_template.default_version
             min_size = workload.min_size
             max_size = workload.max_size
             desired_size = workload.desired_size

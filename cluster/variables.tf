@@ -21,11 +21,6 @@ variable "cluster_additional_security_group_ids" {
   default = []
 }
 
-variable "node_security_group_additional_rules" {
-  type = map(any)
-  default = {}
-}
-
 variable "node_security_group_tags" {
   type = map(string)
   default = {}
