@@ -1,49 +1,30 @@
-locals {
-    node_sg_default_rules = {
-      ingress_self_all = {
-        description = "Node to node all ports/protocols"
-        protocol    = "-1"
-        from_port   = 0
-        to_port     = 0
-        type        = "ingress"
-        self        = true
-      }
+resource "aws_security_group" "nodes_sg" {
+  name = "${var.cluster_name}-nodes-sg"
+  description = "security group for control orchestrator"
+  vpc_id = var.network.vpc_id
 
-      egress_olx_all = {
-        description = "Allows output to all OLX networks"
-        protocol    = "-1"
-        from_port   = 0
-        to_port     = 0
-        type        = "egress"
-        cidr_blocks = ["10.0.0.0/8"]
-      }
+  ingress {
+    description = "orchestrator network connection"
+    from_port = 0
+    to_port = 0 
+    cidr_blocks = [ "10.200.0.0/16" ]
+    protocol = "tcp"
+  }
 
-      egress_internet_all = {
-        description = "Allows output to internet"
-        protocol    = "-1"
-        from_port   = 0
-        to_port     = 0
-        type        = "egress"
-        cidr_blocks = ["0.0.0.0/0"]
-      }
+  ingress {
+    description = "node to node"
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    self = true 
+  }
 
-      egress_nexus = {
-        description = "Nexus registry 5000/tcp"
-        protocol = "tcp"
-        from_port = 5000
-        to_port = 5000
-        type = "egress"
-        cidr_blocks = ["0.0.0.0/0"]
-      }
-
-      ingress_metrics_server = {
-        description = "Control Plane metrics server communication"
-        protocol = "tcp"
-        from_port = 4443
-        to_port = 4443
-        type = "ingress"
-        source_cluster_security_group = true
-      }
+  egress {
+    description = "enable all traffic"
+    from_port = 0 
+    to_port = 0 
+    cidr_blocks = [ "0.0.0.0/0" ]
+    protocol = "-1"
   }
 }
 
